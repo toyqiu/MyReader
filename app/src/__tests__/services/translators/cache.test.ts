@@ -98,7 +98,7 @@ describe('translation cache', () => {
     });
 
     test('preserves special characters in text', () => {
-      const key = getCacheKey('foo:bar:baz', 'en', 'de', 'deepl');
+      const key = getCacheKey('foo:bar:baz', 'en', 'de', 'edge');
       expect(key).toBe('deepl:en:de:foo:bar:baz');
     });
 
@@ -148,10 +148,10 @@ describe('translation cache', () => {
 
     test('different providers produce different cache entries', async () => {
       await storeInCache('hello', 'bonjour-google', 'en', 'fr', 'google');
-      await storeInCache('hello', 'bonjour-deepl', 'en', 'fr', 'deepl');
+      await storeInCache('hello', 'bonjour-deepl', 'en', 'fr', 'edge');
 
       const fromGoogle = await getFromCache('hello', 'en', 'fr', 'google');
-      const fromDeepl = await getFromCache('hello', 'en', 'fr', 'deepl');
+      const fromDeepl = await getFromCache('hello', 'en', 'fr', 'edge');
 
       expect(fromGoogle).toBe('bonjour-google');
       expect(fromDeepl).toBe('bonjour-deepl');
@@ -184,7 +184,7 @@ describe('translation cache', () => {
     test('no filter clears all entries', async () => {
       await seedCache([
         { text: 'a', translation: '1', sourceLang: 'en', targetLang: 'fr', provider: 'google' },
-        { text: 'b', translation: '2', sourceLang: 'en', targetLang: 'de', provider: 'deepl' },
+        { text: 'b', translation: '2', sourceLang: 'en', targetLang: 'de', provider: 'edge' },
       ]);
 
       const deleted = await clearCache();
@@ -197,7 +197,7 @@ describe('translation cache', () => {
     test('provider filter clears only matching provider', async () => {
       await seedCache([
         { text: 'a', translation: '1', sourceLang: 'en', targetLang: 'fr', provider: 'google' },
-        { text: 'b', translation: '2', sourceLang: 'en', targetLang: 'fr', provider: 'deepl' },
+        { text: 'b', translation: '2', sourceLang: 'en', targetLang: 'fr', provider: 'edge' },
         { text: 'c', translation: '3', sourceLang: 'en', targetLang: 'de', provider: 'google' },
       ]);
 
@@ -205,7 +205,7 @@ describe('translation cache', () => {
       expect(deleted).toBe(2);
 
       // The deepl entry should remain
-      const result = await getFromCache('b', 'en', 'fr', 'deepl');
+      const result = await getFromCache('b', 'en', 'fr', 'edge');
       expect(result).toBe('2');
 
       // Google entries should be gone
@@ -256,7 +256,7 @@ describe('translation cache', () => {
       const origDateNow = Date.now;
       Date.now = () => pastTime;
       await storeInCache('old-g', 'x', 'en', 'fr', 'google');
-      await storeInCache('old-d', 'y', 'en', 'fr', 'deepl');
+      await storeInCache('old-d', 'y', 'en', 'fr', 'edge');
       Date.now = origDateNow;
 
       // New google entry
@@ -274,7 +274,7 @@ describe('translation cache', () => {
       expect(resultNewG).toBe('z');
 
       // old-d should remain (different provider)
-      const resultOldD = await getFromCache('old-d', 'en', 'fr', 'deepl');
+      const resultOldD = await getFromCache('old-d', 'en', 'fr', 'edge');
       expect(resultOldD).toBe('y');
     });
   });
@@ -292,7 +292,7 @@ describe('translation cache', () => {
     test('returns correct entry count', async () => {
       await seedCache([
         { text: 'a', translation: '1', sourceLang: 'en', targetLang: 'fr', provider: 'google' },
-        { text: 'b', translation: '2', sourceLang: 'en', targetLang: 'de', provider: 'deepl' },
+        { text: 'b', translation: '2', sourceLang: 'en', targetLang: 'de', provider: 'edge' },
       ]);
 
       const stats = await getCacheStats(false);

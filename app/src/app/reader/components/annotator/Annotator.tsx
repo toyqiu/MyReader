@@ -142,7 +142,7 @@ const Annotator: React.FC<{ bookKey: string; contentInsets: Insets }> = ({
   const [selection, setSelection] = useState<TextSelection | null>(null);
   const [showAnnotPopup, setShowAnnotPopup] = useState(false);
   const [showDictionaryPopup, setShowDictionaryPopup] = useState(false);
-  const [showDeepLPopup, setShowDeepLPopup] = useState(false);
+  const [showTranslatorPopup, setShowTranslatorPopup] = useState(false);
   const [showProofreadPopup, setShowProofreadPopup] = useState(false);
   const [trianglePosition, setTrianglePosition] = useState<Position>();
   const [annotPopupPosition, setAnnotPopupPosition] = useState<Position>();
@@ -186,7 +186,7 @@ const Annotator: React.FC<{ bookKey: string; contentInsets: Insets }> = ({
   const pendingWordLensDictRef = useRef(false);
 
   const showingPopup =
-    showAnnotPopup || showDictionaryPopup || showDeepLPopup || showProofreadPopup;
+    showAnnotPopup || showDictionaryPopup || showTranslatorPopup || showProofreadPopup;
 
   const popupPadding = useResponsiveSize(10);
   const trianglePadding = popupPadding * 2 + 6;
@@ -306,7 +306,7 @@ const Annotator: React.FC<{ bookKey: string; contentInsets: Insets }> = ({
       setSelection(null);
       setShowAnnotPopup(false);
       setShowDictionaryPopup(false);
-      setShowDeepLPopup(false);
+      setShowTranslatorPopup(false);
       setShowProofreadPopup(false);
       setEditingAnnotation(null);
     }, 500),
@@ -424,7 +424,7 @@ const Annotator: React.FC<{ bookKey: string; contentInsets: Insets }> = ({
               });
               // Show translation popup preferentially for PDF right-click
               setShowAnnotPopup(false);
-              setShowDeepLPopup(true);
+              setShowTranslatorPopup(true);
               setShowDictionaryPopup(false);
             }
           }
@@ -1045,7 +1045,7 @@ const Annotator: React.FC<{ bookKey: string; contentInsets: Insets }> = ({
       containerRef.current?.focus();
     }
     setShowAnnotPopup(true);
-    setShowDeepLPopup(false);
+    setShowTranslatorPopup(false);
     setShowDictionaryPopup(false);
   };
 
@@ -1304,7 +1304,7 @@ const Annotator: React.FC<{ bookKey: string; contentInsets: Insets }> = ({
   const handleTranslation = () => {
     if (!selection || !selection.text) return;
     setShowAnnotPopup(false);
-    setShowDeepLPopup(true);
+    setShowTranslatorPopup(true);
   };
 
   const handleSpeakText = async (oneTime = false) => {
@@ -1739,7 +1739,7 @@ const Annotator: React.FC<{ bookKey: string; contentInsets: Insets }> = ({
             />
           );
         })()}
-      {showDeepLPopup && trianglePosition && translatorPopupPosition && (
+      {showTranslatorPopup && trianglePosition && translatorPopupPosition && (
         <TranslatorPopup
           text={selection?.text as string}
           position={translatorPopupPosition}
