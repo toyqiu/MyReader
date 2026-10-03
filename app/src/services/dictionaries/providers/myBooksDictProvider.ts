@@ -22,6 +22,7 @@ import type {
 import { queryMyDict, type MyDictResult } from './myDictQuery';
 import { buildMyDictResourceUrl } from './myDictUrl';
 import { AUDIO_BOUND, wireDictAudio } from '../dictAudio';
+import { wireEntryImageInteractions } from './dictEntryImages';
 
 const MYBOOKS_DICT_URL = 'https://mybooks.top/dict';
 
@@ -753,6 +754,9 @@ export const renderMyBooksResults = (
       },
     );
     wireLinks(body, options.onNavigate);
+    // 词条图片交互（牛津拓展图原地展开、扫描版大图幻灯片）：从扩展移植回来，
+    // 详见 dictEntryImages.ts 头注释。链接包裹的图由 wireLinks 处理，这里不抢。
+    wireEntryImageInteractions(body);
     if (options.isDarkMode) adaptToDarkTheme(body);
 
     // Initial visibility follows the default tab; only the first group visible

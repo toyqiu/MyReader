@@ -37,10 +37,16 @@ export const openUpstream = (target: URL, timeoutMs: number): Promise<IncomingMe
     request.on('error', reject);
   });
 
-// Image/audio/video/font/CSS only: HTML, SVG or scripts served from the
-// reader origin could run with its privileges.
+// Image/audio/video/font/CSS only: HTML or scripts served from the reader
+// origin could run with its privileges.
+// SVG (image/svg+xml) is allowed on purpose: inside <img>/CSS backgrounds
+// browsers never execute SVG scripts, and navigating to the relayed document
+// is neutralised by the `CSP: sandbox` header below (no allow-scripts), so
+// dictionary-bracket icons like 広辞苑's render instead of breaking
+// (upstream serves them as image/svg+xml + nosniff; downgrading to
+// octet-stream makes every <img> refuse to paint).
 const SAFE_RESOURCE_TYPE_RE =
-  /^(?:image\/(?!svg)[\w.+-]+|audio\/[\w.+-]+|video\/[\w.+-]+|font\/[\w.+-]+|text\/css|application\/(?:font-[\w.+-]+|x-font-[\w.+-]+|vnd\.ms-fontobject|octet-stream|ogg))$/i;
+  /^(?:image\/[\w.+-]+|audio\/[\w.+-]+|video\/[\w.+-]+|font\/[\w.+-]+|text\/css|application\/(?:font-[\w.+-]+|x-font-[\w.+-]+|vnd\.ms-fontobject|octet-stream|ogg))$/i;
 
 export const sanitizeResourceContentType = (contentType: string | null | undefined): string => {
   const value = (contentType ?? '').trim();
